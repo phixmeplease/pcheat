@@ -44,10 +44,13 @@ function PANEL:MakeCloseButton()
 end
 
 function PANEL:Paint(w, h)
-    draw.RoundedBox(6, 0, 0, w, h, pcheat.theme.background)
+    local aX, aY = self:LocalToScreen()
+    BSHADOWS.BeginShadow()
+    draw.RoundedBox(6, aX, aY, w, h, pcheat.theme.background)
+    BSHADOWS.EndShadow(3, 1, 1)
 end
 
-vgui.Register("pcheat.frame", PANEL, "Panel")
+vgui.Register("pcheat.frame", PANEL, "EditablePanel")
 
 concommand.Add("pcheat_menu", function()
     pcheat.frame = vgui.Create("pcheat.frame")

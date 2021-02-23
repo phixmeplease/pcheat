@@ -1,8 +1,38 @@
 local cheat_id = "esp"
 local cheattable = pcheat.registeredcheats[cheat_id]
+local entesptable = {}
 
 local function getFont(n)
     return "pcheat.fonts." .. cheat_id .. "." .. n
+end
+
+local function calcThings(t)
+    local nt = {}
+    for k, v in pairs(ents.GetAll()) do
+        if (table.HasValue(t, v:GetClass())) then
+            local cnt = table.Count(nt) + 1
+
+            nt[cnt] = v
+        end
+    end
+
+    entesptable = nt
+end
+
+local function calculateEntityTable(str)
+    entesptable = {}
+
+    local newtbl = string.Explode(" ", str)
+    if (!newtbl) then return end
+    local t = {}
+
+    for k, v in pairs(newtbl) do
+        local cnt = table.Count(t) + 1
+
+        t[cnt] = newtbl[k]
+    end
+
+    calculateEntityTable(t)
 end
 
 local PANEL = {}
@@ -17,10 +47,26 @@ function PANEL:Init()
         self:AddOption(k)
     end
 
-    self.entesp = self.scroll:Add("DTextEntry")
+    self.entesp = self.scroll:Add("pcheat.textentry")
     self.entesp:Dock(TOP)
     self.entesp:SetTall(50)
-    self.entesp:SetText("spawned_weapon, spawned_shipment")
+    self.entesp:SetText("spawned_weapon,spawned_shipment")
+    self.entesp:DockMargin(10, 10, 10, 10)
+
+    self.saveentesp = self.scroll:Add("pcheat.button")
+    self.saveentesp:Dock(TOP)
+    self.saveentesp:SetTall(45)
+    self.saveentesp:DockMargin(10, 0, 10, 0)
+    self.saveentesp:SetText("Save ESP Table")
+    self.saveentesp:SetHoverColor(Color(pcheat.theme.accent.r - 45, pcheat.theme.accent.g - 45, pcheat.theme.accent.b - 45))
+
+    self.saveentesp.DoClick = function()
+        calculateEntityTable(self.entesp:GetText())
+    end
+
+    self.b = self.scroll:Add("Panel")
+    self.b:Dock(TOP)
+    self.b:SetTall(10)
 end
 
 function PANEL:AddOption(name)
@@ -99,5 +145,25 @@ hook.Add("HUDPaint", "pcheat.hooks." .. cheat_id .. ".HUDPaint", function()
                 curY = curY + 20
             end
         end
+    end
+
+    if (cheattable.options["show_entity_name"] == true) then
+        local ent = LocalPlayer():GetEyeTrace().Entity
+        if (!ent) then return end
+        draw.SimpleText(ent, getFont("name"), ScrW() / 2, ScrH() - 25, pcheat.theme.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+    end
+
+    -- if (cheattable.options["entity_esp"] == true) then
+    --     for k, v in pairs(ents.GetAll()) do
+    --         local xpos = v:GetPos():ToScreen()
+    --         if (!xpos) then return end
+    --         draw.SimpleText(v:GetClass(), getFont("name"), xpos.x, xpos.y, pcheat.theme.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    --     end
+    -- end
+end)
+
+hook.Add("PreDrawHalos", "pcheat.hooks." .. cheat_id .. ".PreDrawHalos", function()
+    if (cheattable.options["entity_esp"] == true) then
+        halo.Add(entesptable, color_white, 2, 2, 1, true, true)
     end
 end)

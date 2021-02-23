@@ -81,7 +81,7 @@ function PANEL:SetActive(id)
 end
 
 function PANEL:Paint(w, h)
-    draw.RoundedBox(0, 0, 0, w, h, pcheat.theme.nav_background)
+    draw.RoundedBoxEx(6, 0, 0, w, h, pcheat.theme.nav_background, false, false, true, false)
 end
 
 vgui.Register("pcheat.sidebar", PANEL, "EditablePanel")
