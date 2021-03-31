@@ -1,16 +1,10 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self.header = self:Add("Panel")
-    self.header:Dock(TOP)
-    self.header:SetTall(0)
-    self.header:SizeTo(50000, 30, 0.2, 0, -1, function()
-        self:MakeCloseButton()
-    end)
-
-    self.header.Paint = function(s, w, h)
-        draw.RoundedBoxEx(6, 0, 0, w, h, pcheat.theme.header, true, true, false, false)
-    end
+    self.c = self:Add("DButton")
+    self.c:Dock(TOP)
+    self.c.DoClick = function() self:Remove() end
+    self.c:SetTall(30)
 end
 
 function PANEL:MakeCloseButton()
@@ -54,10 +48,15 @@ vgui.Register("pcheat.frame", PANEL, "EditablePanel")
 
 concommand.Add("pcheat_menu", function()
     pcheat.frame = vgui.Create("pcheat.frame")
-    pcheat.frame:SetSize(ScrW() * .4, ScrH() * .4)
+    //pcheat.frame:SetSize(ScrW() * .4, ScrH() * .4)
+    pcheat.frame:SetSize(0, 0)
     pcheat.frame:SetPos(10, 10)
     --pcheat.frame:SetTitle(pcheat.frameTitle)
     pcheat.frame:MakePopup()
+
+    pcheat.frame:SizeTo(ScrW() * .4, ScrH() * .4, 0.3, 0, -1, function()
+    
+    end)
 
     pcheat.frame.sidebar = pcheat.frame:Add("pcheat.sidebar")
     pcheat.frame.sidebar:Dock(LEFT)

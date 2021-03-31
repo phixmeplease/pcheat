@@ -20,9 +20,11 @@ local function calcThings(t)
 end
 
 local function calculateEntityTable(str)
+    //if (istable(str)) then return end
+    PrintTable(str)
     entesptable = {}
 
-    local newtbl = string.Explode(" ", str)
+    local newtbl = string.Explode(",", str)
     if (!newtbl) then return end
     local t = {}
 
@@ -32,7 +34,7 @@ local function calculateEntityTable(str)
         t[cnt] = newtbl[k]
     end
 
-    calculateEntityTable(t)
+    calcThings(t)
 end
 
 local PANEL = {}
@@ -46,7 +48,7 @@ function PANEL:Init()
         if (k == "enabled") then continue end
         self:AddOption(k)
     end
-
+    /*
     self.entesp = self.scroll:Add("pcheat.textentry")
     self.entesp:Dock(TOP)
     self.entesp:SetTall(50)
@@ -63,6 +65,7 @@ function PANEL:Init()
     self.saveentesp.DoClick = function()
         calculateEntityTable(self.entesp:GetText())
     end
+    */
 
     self.b = self.scroll:Add("Panel")
     self.b:Dock(TOP)
